@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>p 352 (할 일 목록)</title>
+   
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap');
+        .check-ok {
+            text-decoration: line-through;
+            color: rgb(219, 216, 225);
+        }
+        html {
+            display: flex;
+        }
+        body {
+            /* background-image: url(https://cdn.pixabay.com/photo/2020/09/20/03/49/board-5585922_1280.png); */
+            background-image: url(./img/board2.png);
+            background-size : cover;
+            background-repeat:no-repeat;
+            background-position: center;
+            width: 100%;
+            height: 100vh;
+            text-align: center;
+            font-family: 'Gamja Flower', cursive;
+            font-size: 200%;
+            
+            
+        }
+        
+        h1 {
+            color: rgb(219, 216, 225);
+            margin-top: 100px;
+           
+        }
+        input {
+            border: 0px;
+            border-bottom: 2px solid rgb(219, 216, 225);
+            background-color: #528863;
+            width: 500px;
+            padding-left: 15px;
+            text-align: center;
+            font-family: 'Gamja Flower', cursive;
+            font-size: 100%;
+        }
+        button {
+            border: 0px;
+            border-radius: 10px;
+            background-color: #528863;
+            color: rgb(219, 216, 225);
+            font-family: 'Gamja Flower', cursive;
+            font-size: 80%;
+        }
+        input[type="checkbox"] {
+            width: 50px;
+        }
+        div1 {
+            width: 100%;
+        }
+        hr {
+           width: 400px; 
+        }
+       
+        
+    </style>
+    <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', ()=>{
+            /* DOM 구성 */
+            const br = document.createElement('br')
+            const h1 =  document.createElement('h1')
+            const input =  document.createElement('input')
+            const button =  document.createElement('button')
+            const btn = document.createElement('button')
+            const div1 = document.createElement('div1')
+            const hr = document.createElement('hr')
+            const p = document.createElement('p')
+
+            document.body.append( h1, div1, br, hr)
+            div1.append( input, br, button, btn)
+
+        
+            h1.innerHTML = "☆☆ 할 일 목록 "
+            new TypeIt(h1)
+            .go() 
+
+            input.setAttribute('id','todo')
+            input.style.height = '30px'
+            input.style.marginBottom = '20px'
+            button.innerHTML = "추가"
+            button.style.marginRight = '20px'
+            btn.innerHTML = '모두 지우기'
+
+
+
+            /* 입력한 부분 변수로 받기 */
+            let content = ''
+            input.addEventListener('change', (e)=>{
+                content = e.target.value
+            })
+
+            /* 동작 1단계 */
+            ct = 0
+        
+            // 할일목록을 추가하는 함수
+            function addContent() {
+                    if(content) {
+                        ct++
+                        const div = document.createElement('div')
+                        const check = document.createElement('input')
+                        const span = document.createElement('span')
+                        const inbutton = document.createElement('button')
+    
+                        document.body.append(div)
+                        div.append(check, span, inbutton)
+                        inbutton.innerHTML = '지우기'
+                        inbutton.style.display = 'none'
+                        // check.setAttribute('class', ct++)  -> 몇번째의 순서인지 번호를 매겨 알려준다.
+                        // check.className = ct++
+                        check.setAttribute('type', 'checkbox')
+                        span.innerHTML = content
+                        input.value = ''  // -> 추가한글을 칸에서 지워버린다.
+                        content = ''  // -> 한번 추가한 글을 더이상 추가 시키지 않는다. 글은 남아있다
+                        
+    
+
+                        /* 체크 방법2(줄긋는 이벤트) */
+                        check.addEventListener('change', (e) => {
+                            if (e.currentTarget.checked) {
+                                span.className = 'check-ok'  //  -> css 를 줘서 줄을 그어줄 수 있다.                            
+                                inbutton.style.display = 'inline-block'
+                            } 
+                            else  {
+                                span.className = 'check-no'
+                                inbutton.style.display = 'none'
+                                
+                            }
+                        })
+                        
+                        inbutton.addEventListener('click', (e) => {
+                                document.body.removeChild(div)    
+                        })
+    
+                        btn.addEventListener('click', (e) => {
+                            localStorage.clear();
+                            document.body.removeChild(div) 
+                        })
+                    }
+                }
+
+
+            // 로컬스토리지 사용
+            const savedValue = localStorage.getItem('input');
+            let arr = [];
+
+            if (savedValue) {
+                arr = JSON.parse(savedValue);
+            }
+
+            button.addEventListener('click',(event)=>{
+                const value = input.value;  //input안에 있는 value 속성 접근
+                arr.push(value)
+                localStorage.setItem('input', JSON.stringify(arr));
+                addContent() 
+                console.log(event)
+            })
+
+
+            // input 이벤트 리스너 설정
+            input.addEventListener('keyup', (event) => {
+                const value = event.currentTarget.value; // currentTarget로 자기 속성에 접근
+                if (event.key === 'Enter' && value.trim() !=='') {
+                    // 배열에 값 추가
+                    arr.push(value);
+
+                    event.currentTarget.value = ''; // 입력 후 배열을 비워준다.
+
+                    // 로컬 스토리지에 배열 저장
+                    localStorage.setItem('input', JSON.stringify(arr));
+                    addContent()
+                }
+            });
+        })
+        
+
+
+
+        //--------------------------------------------------------------------------
+
+                            
+    
+                        /* 체크 방법1 */
+                        // check.addEventListener('change', (e) => {
+                        //     //console.log(check)     ->    check 를 리턴한값인 e로 대체해서 적을 수 있다.
+                        //     //console.log(check.value)     ->   e로 대체해서 사용하면 e.currentTarget 을 붙여서 사용한다.
+                        //     //console.log(check.checked)
+                        //     if (e.currentTarget.checked) {
+                        //         span.style.textDecoration = 'line-through' // span말고 div를 쓸수있지만 div안에 있는 모든 글을 줄그어 버린다.
+                        //     } 
+                        //     else {
+                        //         span.style.textDecoration = 'none'
+                        //     }
+                        // })
+    
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>
